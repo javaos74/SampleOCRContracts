@@ -10,6 +10,7 @@ using UiPath.OCR.Contracts.DataContracts;
 
 namespace SampleActivities.Basic.OCR
 {
+    [DisplayName("Clova OCR Engine")]
     public class SimpleOCREngine : OCRCodeActivity
     {
         [Category("Input")]
