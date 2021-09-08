@@ -26,7 +26,7 @@ namespace SampleActivities.Basic.OCR
         {
             return new Dictionary<string, object>
             {
-                { nameof(SimpleOCREngine.CustomInput), _sampleScrapeControl.SampleInput }
+                { "option1", _sampleScrapeControl.SampleInput }
             };
         }
     }

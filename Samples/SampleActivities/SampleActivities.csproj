@@ -57,14 +57,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Basic\DataExtraction\SimpleExtractorDesigner.xaml.cs">
-      <DependentUpon>SimpleExtractorDesigner.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Basic\DataExtraction\SimpleExtractor.cs" />
-    <Compile Include="Basic\DocumentClassification\SimpleClassifier.cs" />
-    <Compile Include="Basic\DocumentClassification\SimpleClassifierDesigner.xaml.cs">
-      <DependentUpon>SimpleClassifierDesigner.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Basic\OCR\ClovaGeneralOCR.cs" />
     <Compile Include="Basic\OCR\OCRResultHelper.cs" />
     <Compile Include="Basic\OCR\SimpleOCREngine.cs" />
     <Compile Include="Basic\OCR\SimpleOCRScrape.cs" />
@@ -80,14 +73,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Basic\DataExtraction\SimpleExtractorDesigner.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Basic\DocumentClassification\SimpleClassifierDesigner.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Basic\OCR\SimpleScrapeControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
