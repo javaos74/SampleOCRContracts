@@ -220,6 +220,7 @@ namespace SampleActivities.Basic.OCR
                     foreach( var c in word.Characters)
                     {
                         c.PolygonPoints = new[] { new PointF(x + dx * idx, y), new PointF(x + dx * (idx+1), y), new PointF(x + dx *(idx+1), y2), new PointF(x + dx * idx, y2) };
+                        c.Confidence = word.Confidence;
                         idx++;
                     }
                 }
