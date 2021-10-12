@@ -9,6 +9,10 @@ namespace SampleActivities.Basic.OCR
     {
         public string SampleInput { get; set; }
 
+        public string Endpoint { get; set;}
+
+        public string Secret {  get; set; }
+
         public SimpleScrapeControl()
             : this (ScrapeEngineUsages.Screen)
         {

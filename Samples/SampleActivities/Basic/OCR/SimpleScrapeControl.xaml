@@ -12,18 +12,30 @@
         <converters:UsageToVisibilityConverter x:Key="ScreenVisibilityConverter" Document="Collapsed" Screen="Visible" />
     </UserControl.Resources>
     <Grid>
-        <StackPanel>
-            <DockPanel LastChildFill="True" Margin="0,5,0,0">
-                <Label Visibility="{Binding Usage, Converter={StaticResource DocumentVisibilityConverter}}"
-                       Content="Sample Document Input:" 
-                       DockPanel.Dock="Left"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <DockPanel LastChildFill="true" Margin="0,5,0,0">
                 <Label Visibility="{Binding Usage, Converter={StaticResource ScreenVisibilityConverter}}"
-                       Content="Sample Screen Input:" 
+                       Content="Clova Endpoint :" 
                        DockPanel.Dock="Left"/>
                 <TextBox DockPanel.Dock="Right" Margin="5,0,0,0"
-                          Text="{Binding Path=SampleInput, Mode=TwoWay}"
-                          Name="SampleInputTextBox"
+                          Text="{Binding Path=Endpoint, Mode=TwoWay}"
                           VerticalAlignment="Bottom"/>
+            </DockPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="1">
+            <DockPanel LastChildFill="true" Margin="0,5,0,0">
+                <Label Visibility="{Binding Usage, Converter={StaticResource ScreenVisibilityConverter}}"
+                       Content="Clova Secret : " DockPanel.Dock="Left" />
+                <TextBox DockPanel.Dock="Right" Margin="5,0,0,0"
+                         Text="{Binding Path=Secret, Mode=TwoWay}"
+                         VerticalAlignment="Bottom" />
             </DockPanel>
         </StackPanel>
     </Grid>

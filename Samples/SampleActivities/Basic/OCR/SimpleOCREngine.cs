@@ -1,6 +1,7 @@
 ﻿using System.Activities;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,12 +36,20 @@ namespace SampleActivities.Basic.OCR
         public override Task<OCRResult> PerformOCRAsync(Image image, Dictionary<string, object> options, CancellationToken ct)
         {
             //string customInput = options[nameof(CustomInput)] as string;
-           string text = $"Text from {nameof(SimpleOCREngine)} with custom input: Charles Kim ";
-            filepath = System.IO.Path.GetTempFileName();
+            string text = $"Text from {nameof(SimpleOCREngine)} with custom input: Charles Kim ";
+            filepath = System.IO.Path.Combine(@"C:\Temp", "clova.png");
             string fileFormat = image.RawFormat.ToString();
-            image.Save(filepath, image.RawFormat);
+            image.Save(filepath, System.Drawing.Imaging.ImageFormat.Png);
+#if DEBUG
+            using (EventLog eventLog = new EventLog("Application"))
+            {
+                eventLog.Source = "Application";
+                foreach( var k in options.Keys)
+                    eventLog.WriteEntry($"Entry Key:{k}  and Value: {options[k].ToString()}", EventLogEntryType.Information, 101, 1);
+            }
             System.Console.WriteLine("temp file path " + filepath);
-            return Task.FromResult(OCRResultHelper.FromClovaClient(filepath, options["apikey"].ToString(), options["endpoint"].ToString(), image.RawFormat));
+#endif
+            return Task.FromResult(OCRResultHelper.FromClovaClient(filepath, options["apikey"].ToString(), options["endpoint"].ToString(), System.Drawing.Imaging.ImageFormat.Png));
             //return Task.FromResult(OCRResultHelper.FromText(text));
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using UiPath.OCR.Contracts.Activities;
 using UiPath.OCR.Contracts.Scrape;
 
@@ -24,9 +25,17 @@ namespace SampleActivities.Basic.OCR
 
         public override Dictionary<string, object> GetScrapeArguments()
         {
+#if DEBUG
+            using (EventLog eventLog = new EventLog("Application"))
+            {
+                eventLog.Source = "Application";
+                eventLog.WriteEntry($"{_sampleScrapeControl.Endpoint} and {_sampleScrapeControl.Secret} called", EventLogEntryType.Information, 101, 1);
+            }
+#endif
             return new Dictionary<string, object>
             {
-                { "option1", _sampleScrapeControl.SampleInput }
+                { "apikey", _sampleScrapeControl.Secret },
+                { "endpoint", _sampleScrapeControl.Endpoint}
             };
         }
     }

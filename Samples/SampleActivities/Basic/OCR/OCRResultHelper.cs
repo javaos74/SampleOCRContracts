@@ -168,79 +168,87 @@ namespace SampleActivities.Basic.OCR
             fileData = null;
             formData = null;
             StringBuilder sb = new StringBuilder();
-
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            System.Console.WriteLine(response.StatusCode.ToString());
-            Stream stream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(stream, Encoding.UTF8);
-            string text = reader.ReadToEnd();
-            //인식된 문장 저장 
-            //System.Console.WriteLine(text);
-#if DEBUG
-            System.IO.File.WriteAllText(@"C:\Temp\clova.resp.txt", text);
-#endif
-            //ResponseCode.Set(context, (int)response.StatusCode);
             var ocrResult = new OCRResult();
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
-                JObject respJson = JObject.Parse(text);
-                JArray blocks = (JArray)respJson["images"][0]["fields"];
-                ocrResult.Words = blocks.Select(p => new Word
-                {
-                    Text = (string)p["inferText"],
-                    Confidence = Convert.ToInt32(100 * ((double)p["inferConfidence"])),
-                    PolygonPoints = ((JArray)p["boundingPoly"]["vertices"]).Select(v => new PointF
-                    {
-                        X = (float)v["x"],
-                        Y = (float)v["y"]
-                    }).ToArray(),
-                    Characters = ((string)p["inferText"]).Select(ch => new Character
-                    {
-                        Char = ch,
-                    }).ToArray()
-                }).ToArray();
-                foreach( var blk in blocks)
-                {
-                    sb.Append((string)blk["inferText"]);
-                    sb.Append(((Boolean)blk["lineBreak"]) ? Environment.NewLine : " ");
-                }
-                foreach( var word in ocrResult.Words)
-                {
-                    var x = word.PolygonPoints[0].X;
-                    var y = word.PolygonPoints[0].Y;
-                    var w = Math.Abs(word.PolygonPoints[1].X - x);
-                    var y2 = word.PolygonPoints[3].Y;
-
-                    float dx = w / word.Characters.Length;
-                    float dy = Math.Abs(y2-y) / word.Characters.Length;
-                    int idx = 0;
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                System.Console.WriteLine(response.StatusCode.ToString());
+                Stream stream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(stream, Encoding.UTF8);
+                string text = reader.ReadToEnd();
+                //인식된 문장 저장 
+                //System.Console.WriteLine(text);
 #if DEBUG
-                    System.Console.WriteLine(string.Format("{0} has {1} characters", word.Text, word.Characters.Length));
+                System.IO.File.WriteAllText(@"C:\Temp\clova.resp.txt", text);
 #endif
-                    foreach( var c in word.Characters)
+                //ResponseCode.Set(context, (int)response.StatusCode);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    JObject respJson = JObject.Parse(text);
+                    JArray blocks = (JArray)respJson["images"][0]["fields"];
+                    ocrResult.Words = blocks.Select(p => new Word
                     {
-                        c.PolygonPoints = new[] { new PointF(x + dx * idx, y), new PointF(x + dx * (idx+1), y), new PointF(x + dx *(idx+1), y2), new PointF(x + dx * idx, y2) };
-                        c.Confidence = word.Confidence;
-                        idx++;
+                        Text = (string)p["inferText"],
+                        Confidence = Convert.ToInt32(100 * ((double)p["inferConfidence"])),
+                        PolygonPoints = ((JArray)p["boundingPoly"]["vertices"]).Select(v => new PointF
+                        {
+                            X = (float)v["x"],
+                            Y = (float)v["y"]
+                        }).ToArray(),
+                        Characters = ((string)p["inferText"]).Select(ch => new Character
+                        {
+                            Char = ch,
+                        }).ToArray()
+                    }).ToArray();
+                    foreach (var blk in blocks)
+                    {
+                        sb.Append((string)blk["inferText"]);
+                        sb.Append(((Boolean)blk["lineBreak"]) ? Environment.NewLine : " ");
                     }
-                }
-                ocrResult.Text = sb.ToString();
-                ocrResult.SkewAngle = 0;
-                ocrResult.Confidence = 0;
+                    foreach (var word in ocrResult.Words)
+                    {
+                        var x = word.PolygonPoints[0].X;
+                        var y = word.PolygonPoints[0].Y;
+                        var w = Math.Abs(word.PolygonPoints[1].X - x);
+                        var y2 = word.PolygonPoints[3].Y;
+
+                        float dx = w / word.Characters.Length;
+                        float dy = Math.Abs(y2 - y) / word.Characters.Length;
+                        int idx = 0;
 #if DEBUG
-                System.IO.File.WriteAllText(@"C:\Temp\ocresult.json", Newtonsoft.Json.JsonConvert.SerializeObject(ocrResult));
-                System.Console.WriteLine("full text : " + ocrResult.Text);
+                        System.Console.WriteLine(string.Format("{0} has {1} characters", word.Text, word.Characters.Length));
+#endif
+                        foreach (var c in word.Characters)
+                        {
+                            c.PolygonPoints = new[] { new PointF(x + dx * idx, y), new PointF(x + dx * (idx + 1), y), new PointF(x + dx * (idx + 1), y2), new PointF(x + dx * idx, y2) };
+                            c.Confidence = word.Confidence;
+                            idx++;
+                        }
+                    }
+                    ocrResult.Text = sb.ToString();
+                    ocrResult.SkewAngle = 0;
+                    ocrResult.Confidence = 0;
+#if DEBUG
+                    System.IO.File.WriteAllText(@"C:\Temp\ocresult.json", Newtonsoft.Json.JsonConvert.SerializeObject(ocrResult));
+                    System.Console.WriteLine("full text : " + ocrResult.Text);
+#endif
+                }
+                else
+                {
+                }
+                stream.Close();
+                response.Close();
+                reader.Close();
+                sb.Clear();
+                sb = null;
+            }
+            catch ( Exception ie)
+            {
+#if DEBUG
+                System.IO.File.WriteAllText(@"C:\Temp\clova.resp.txt", ie.Message);
 #endif
             }
-            else
-            {
-            }
-            stream.Close();
-            response.Close();
-            reader.Close();
-            sb.Clear();
-            sb = null;
-
             return ocrResult;
         }
     }
